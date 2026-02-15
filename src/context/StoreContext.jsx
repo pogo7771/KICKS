@@ -24,7 +24,12 @@ export const StoreProvider = ({ children }) => {
     const [rates, setRates] = useState({ USD: 0.012, EUR: 0.011 }); // Fallback rates
 
     const isAdmin = user?.isAdmin || false;
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    // Normalize API URL to ensure it always ends with /api
+    let envUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    if (envUrl.endsWith('/')) envUrl = envUrl.slice(0, -1);
+    if (!envUrl.endsWith('/api')) envUrl += '/api';
+    const API_URL = envUrl;
+
     console.log("StoreContext initialized, API_URL:", API_URL);
 
     // Fetch products, orders, customers, settings and exchange rates on mount
@@ -480,7 +485,8 @@ export const StoreProvider = ({ children }) => {
             fetchSecurityLogs,
             resetAdminPasswordRequest,
             resetAdminPassword,
-            logs
+            logs,
+            API_URL
         }}
         >
             {children}

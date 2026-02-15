@@ -11,7 +11,7 @@ import '../css/Checkout.css';
 
 const Checkout = () => {
     const { cart, cartTotal, clearCart } = useCart();
-    const { addOrder, formatPrice } = useStore();
+    const { addOrder, formatPrice, API_URL } = useStore();
     const { showNotification } = useNotification();
     const navigate = useNavigate();
     const [clientSecret, setClientSecret] = useState("");
@@ -33,15 +33,16 @@ const Checkout = () => {
 
     useEffect(() => {
         // Create PaymentIntent as soon as the page loads
-        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
-        fetch(`${API_URL}/create-payment-intent`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ amount: cartTotal, currency: 'inr' }),
-        })
-            .then((res) => res.json())
-            .then((data) => setClientSecret(data.clientSecret))
-            .catch((err) => console.error("Error fetching payment intent", err));
+        if (API_URL) {
+            fetch(`${API_URL}/create-payment-intent`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ amount: cartTotal, currency: 'inr' }),
+            })
+                .then((res) => res.json())
+                .then((data) => setClientSecret(data.clientSecret))
+                .catch((err) => console.error("Error fetching payment intent", err));
+        }
     }, [cartTotal]);
 
     const handlePlaceOrder = (e) => {
