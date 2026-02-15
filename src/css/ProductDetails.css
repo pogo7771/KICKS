@@ -1,0 +1,137 @@
+/* ProductDetails.css */
+.product-details-page {
+    animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.product-zoom-container {
+    height: 650px;
+    position: relative;
+    overflow: hidden;
+    background-color: #f8fafc;
+    border-radius: 2rem;
+    /* Matches rounded-4 somewhat */
+}
+
+.product-main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.product-zoom-container:hover .product-main-image {
+    transform: scale(1.1);
+}
+
+.thumbnail-pill {
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    object-fit: cover;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.thumbnail-pill.active {
+    border-color: var(--accent);
+    transform: translateY(-5px);
+}
+
+.size-pill {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.size-pill:hover {
+    border-color: var(--primary);
+    background: var(--surface);
+}
+
+.size-pill.active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+    transform: scale(1.05);
+}
+
+.buy-now-btn {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+}
+
+.trust-card {
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 16px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.nav-tabs-premium {
+    border: none;
+    gap: 2rem;
+}
+
+.nav-tabs-premium .nav-link {
+    border: none;
+    color: #94a3b8;
+    padding: 1rem 0;
+    font-weight: 700;
+    position: relative;
+    background: transparent;
+}
+
+.nav-tabs-premium .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: var(--primary);
+    transition: width 0.3s ease;
+}
+
+.nav-tabs-premium .nav-link.active {
+    color: var(--primary);
+    background: transparent !important;
+}
+
+.nav-tabs-premium .nav-link.active::after {
+    width: 100%;
+}
+
+/* Responsiveness */
+@media (max-width: 991px) {
+    .product-zoom-container {
+        height: 500px;
+    }
+}
+
+@media (max-width: 768px) {
+    .product-zoom-container {
+        height: 400px;
+    }
+
+    .thumbnail-pill {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+@media (max-width: 576px) {
+    .product-zoom-container {
+        height: 350px;
+    }
+}

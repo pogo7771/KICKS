@@ -1,0 +1,10 @@
+/* Shop.css */
+/* Styles mostly replaced by Bootstrap classes */
+.btn-group .btn {
+    border-radius: 50rem !important;
+}
+
+.btn-group .btn.active {
+    background-color: var(--primary);
+    color: var(--white);
+}

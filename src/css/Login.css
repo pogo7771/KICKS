@@ -1,0 +1,209 @@
+/* Login.css */
+.login-page {
+    min-height: calc(100vh - 80px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8fafc;
+    position: relative;
+    overflow: hidden;
+    padding: 2rem;
+}
+
+.login-blob {
+    position: absolute;
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 0;
+    animation: blob-float 20s infinite linear;
+}
+
+@keyframes blob-float {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+
+    50% {
+        transform: translate(50px, 30px) rotate(180deg);
+    }
+
+    100% {
+        transform: translate(0, 0) rotate(360deg);
+    }
+}
+
+.login-card {
+    width: 100%;
+    max-width: 480px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 32px;
+    padding: 3.5rem;
+    box-shadow: 0 40px 100px -20px rgba(15, 23, 42, 0.15);
+    position: relative;
+    z-index: 1;
+    animation: card-reveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes card-reveal {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.login-header h2 {
+    font-weight: 900;
+    letter-spacing: -2px;
+}
+
+.animate-item {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: item-reveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes item-reveal {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.delay-1 {
+    animation-delay: 0.1s;
+}
+
+.delay-2 {
+    animation-delay: 0.2s;
+}
+
+.delay-3 {
+    animation-delay: 0.3s;
+}
+
+.delay-4 {
+    animation-delay: 0.4s;
+}
+
+.delay-5 {
+    animation-delay: 0.5s;
+}
+
+.form-floating>.form-control {
+    border-radius: 16px;
+    background-color: #f1f5f9;
+    border: 2px solid transparent;
+    padding-top: 1.625rem;
+    padding-bottom: 0.625rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.form-floating>.form-control:focus {
+    background-color: #fff;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    transform: translateY(-2px);
+}
+
+.social-login-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: white;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    width: 100%;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.social-login-btn:hover {
+    background: #f8fafc;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    border-color: var(--accent);
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 2.5rem 0;
+    color: var(--secondary);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--border);
+}
+
+.divider:not(:empty)::before {
+    margin-right: 1.5rem;
+}
+
+.divider:not(:empty)::after {
+    margin-left: 1.5rem;
+}
+
+.login-card .btn-primary {
+    border-radius: 16px !important;
+    font-weight: 800;
+    letter-spacing: 1px;
+    padding: 1rem !important;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.login-card .btn-primary:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(37, 99, 235, 0.3);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 576px) {
+    .login-page {
+        padding: 1rem;
+        min-height: 100vh;
+        align-items: flex-start;
+        /* Changed to start so keyboard doesn't hide content */
+        padding-top: 3rem;
+    }
+
+    .login-card {
+        padding: 2rem 1.5rem;
+        max-width: 100%;
+        border-radius: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .login-header h2 {
+        font-size: 2rem;
+    }
+
+    .divider {
+        margin: 2rem 0;
+    }
+
+    .divider:not(:empty)::before,
+    .divider:not(:empty)::after {
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
+}

@@ -1,0 +1,62 @@
+/* BrandMarquee.css */
+.brand-marquee-container {
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+    width: 100%;
+    transform: skewY(-1deg);
+    background: #0f172a !important;
+}
+
+.marquee-content {
+    display: inline-flex;
+    animation: marquee-advanced 25s linear infinite;
+    gap: 6rem;
+    align-items: center;
+}
+
+.brand-item {
+    color: #fff;
+    font-size: 2.5rem;
+    font-weight: 800;
+    opacity: 0.15;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
+    letter-spacing: -2px;
+}
+
+.brand-item:hover {
+    opacity: 1;
+    color: var(--accent);
+    transform: scale(1.1) skewY(1deg);
+}
+
+@keyframes marquee-advanced {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+.brand-marquee-container::before,
+.brand-marquee-container::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 300px;
+    height: 100%;
+    z-index: 2;
+}
+
+.brand-marquee-container::before {
+    left: 0;
+    background: linear-gradient(to right, #0f172a 0%, transparent 100%);
+}
+
+.brand-marquee-container::after {
+    right: 0;
+    background: linear-gradient(to left, #0f172a 0%, transparent 100%);
+}

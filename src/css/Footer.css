@@ -1,0 +1,70 @@
+/* Footer.css */
+.footer-main {
+    background: #0f172a;
+    position: relative;
+    overflow: hidden;
+}
+
+.footer-main .nav-link {
+    color: #94a3b8;
+    padding: 0;
+    margin-bottom: 0.75rem;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.footer-main .nav-link:hover {
+    color: var(--accent);
+    transform: translateX(5px);
+}
+
+.social-circle {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    color: #94a3b8;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.social-circle:hover {
+    background: var(--accent);
+    color: #fff;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+}
+
+.newsletter-input {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px !important;
+    padding: 0.75rem 1.25rem !important;
+    color: #fff !important;
+}
+
+.newsletter-input:focus {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1) !important;
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 2rem 0;
+}
+
+/* Decorative background glow */
+.footer-glow {
+    position: absolute;
+    bottom: -150px;
+    right: -100px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, transparent 70%);
+    filter: blur(50px);
+    pointer-events: none;
+}
