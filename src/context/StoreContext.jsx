@@ -24,7 +24,7 @@ export const StoreProvider = ({ children }) => {
     const [rates, setRates] = useState({ USD: 0.012, EUR: 0.011 }); // Fallback rates
 
     const isAdmin = user?.isAdmin || false;
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    const API_URL = import.meta.env.VITE_API_URL || 'https://kicks-backend-x6vc.onrender.com/api';
     console.log("StoreContext initialized, API_URL:", API_URL);
 
     // Fetch products, orders, customers, settings and exchange rates on mount
