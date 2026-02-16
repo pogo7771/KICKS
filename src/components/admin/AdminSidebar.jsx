@@ -7,44 +7,28 @@ import {
     Users,
     Settings,
     LogOut,
-    Home
+    Home,
+    Ticket,
+    MessageSquare
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import '../../css/admin/AdminSidebar.css';
 
 const AdminSidebar = () => {
-    const { logout: adminLogout, orders, products, settings } = useStore();
-    const [lastActivity, setLastActivity] = React.useState(Date.now());
+    const { logout: adminLogout, orders, products } = useStore();
 
-    React.useEffect(() => {
-        const handleActivity = () => setLastActivity(Date.now());
-        window.addEventListener('mousemove', handleActivity);
-        window.addEventListener('keypress', handleActivity);
-
-        const checkInactivity = setInterval(() => {
-            const timeoutMinutes = settings.sessionTimeout || 15;
-            const inactiveTime = Date.now() - lastActivity;
-            if (inactiveTime > timeoutMinutes * 60 * 1000) {
-                adminLogout();
-                window.location.href = '/admin/login';
-            }
-        }, 10000); // Check every 10 seconds
-
-        return () => {
-            window.removeEventListener('mousemove', handleActivity);
-            window.removeEventListener('keypress', handleActivity);
-            clearInterval(checkInactivity);
-        };
-    }, [lastActivity, settings, adminLogout]);
 
     const pendingOrdersCount = (orders || []).filter(o => o.status === 'Processing' || o.status === 'Pending').length;
     const lowStockCount = (products || []).filter(p => (p.stock || 24) < 10).length;
+    const reviewCount = (products || []).reduce((acc, p) => acc + (p.reviews?.length || 0), 0);
 
     const menuItems = [
         { path: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
         { path: '/admin/products', icon: ShoppingBag, label: 'Products', badge: lowStockCount > 0 ? lowStockCount : null, badgeClass: 'bg-danger text-white' },
         { path: '/admin/orders', icon: ClipboardList, label: 'Orders', badge: pendingOrdersCount > 0 ? pendingOrdersCount : null, badgeClass: 'bg-primary text-white' },
         { path: '/admin/customers', icon: Users, label: 'Customers' },
+        { path: '/admin/reviews', icon: MessageSquare, label: 'Reviews', badge: reviewCount > 0 ? reviewCount : null, badgeClass: 'bg-warning text-dark' },
+        { path: '/admin/coupons', icon: Ticket, label: 'Coupons' },
         { path: '/admin/settings', icon: Settings, label: 'Configs' },
     ];
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, User, UserPlus, Github, Chrome, ArrowRight, AlertCircle } from 'lucide-react';
+import { Github, Chrome, AlertCircle, ShoppingBag } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import '../css/Login.css';
 
@@ -37,132 +37,114 @@ const Register = () => {
 
     return (
         <div className="login-page">
-            <div className="login-blob" style={{ top: '-10%', left: '-10%' }}></div>
-            <div className="login-blob" style={{ bottom: '-10%', right: '-10%' }}></div>
-
-            <div className="login-card">
-                <div className="login-header animate-item">
-                    <h2 className="display-6 fw-bold mb-2">Create Account</h2>
-                    <p className="text-secondary">Join the KICKS community today</p>
+            <div className="login-form-wrapper">
+                {/* Left Side - Visual */}
+                <div className="login-visual" style={{ background: 'linear-gradient(135deg, #FF6B6B 0%, #EE5253 100%)' }}>
+                    <h1>Join The <br />KICKS Community.<br />Today.</h1>
+                    <p>Create an account to unlock exclusive drops, track orders, and experience the future of sneaker shopping.</p>
+                    <div className="visual-illustration"></div>
                 </div>
 
-                <div className="animate-item delay-1">
+                {/* Right Side - Form */}
+                <div className="login-card">
+                    <div className="login-header">
+                        <div className="brand-logo">
+                            <div className="brand-icon" style={{ background: '#FF6B6B' }}>
+                                <ShoppingBag size={20} />
+                            </div>
+                            <span>KICKS.</span>
+                        </div>
+                        <h2>Create Account</h2>
+                        <p>Please enter your details to sign up</p>
+                    </div>
+
                     {error && (
-                        <div className="alert alert-danger d-flex align-items-center gap-2 py-2 small" role="alert">
-                            <AlertCircle size={16} />
+                        <div className="alert alert-danger d-flex align-items-center gap-2 py-2 mb-4 rounded-3 small fw-bold" role="alert">
+                            <AlertCircle size={18} />
                             {error}
                         </div>
                     )}
-                </div>
 
-                <form onSubmit={handleSubmit}>
-                    <div className="form-floating mb-3 animate-item delay-1">
-                        <input
-                            type="text"
-                            className="form-control"
-                            id="nameInput"
-                            placeholder="John Doe"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            required
-                        />
-                        <label htmlFor="nameInput" className="d-flex align-items-center gap-2 text-secondary">
-                            <User size={16} /> Full Name
-                        </label>
-                    </div>
+                    <form onSubmit={handleSubmit}>
+                        <div className="form-group">
+                            <input
+                                type="text"
+                                className="custom-input"
+                                placeholder="Full Name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                required
+                            />
+                        </div>
 
-                    <div className="form-floating mb-3 animate-item delay-2">
-                        <input
-                            type="email"
-                            className="form-control"
-                            id="registerEmailInput"
-                            placeholder="name@example.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
-                        <label htmlFor="registerEmailInput" className="d-flex align-items-center gap-2 text-secondary">
-                            <Mail size={16} /> Email address
-                        </label>
-                    </div>
+                        <div className="form-group">
+                            <input
+                                type="email"
+                                className="custom-input"
+                                placeholder="Email address"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
+                        </div>
 
-                    <div className="form-floating mb-3 animate-item delay-3">
-                        <input
-                            type="password"
-                            className="form-control"
-                            id="registerPasswordInput"
-                            placeholder="Password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                        <label htmlFor="registerPasswordInput" className="d-flex align-items-center gap-2 text-secondary">
-                            <Lock size={16} /> Password
-                        </label>
-                    </div>
+                        <div className="form-group">
+                            <div className="password-input-wrapper">
+                                <input
+                                    type="password"
+                                    className="custom-input"
+                                    placeholder="Password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                />
+                            </div>
+                        </div>
 
-                    <div className="form-floating mb-4 animate-item delay-4">
-                        <input
-                            type="password"
-                            className="form-control"
-                            id="confirmPasswordInput"
-                            placeholder="Confirm Password"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            required
-                        />
-                        <label htmlFor="confirmPasswordInput" className="d-flex align-items-center gap-2 text-secondary">
-                            <Lock size={16} /> Confirm Password
-                        </label>
-                    </div>
+                        <div className="form-group">
+                            <div className="password-input-wrapper">
+                                <input
+                                    type="password"
+                                    className="custom-input"
+                                    placeholder="Confirm Password"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    required
+                                />
+                            </div>
+                        </div>
 
-                    <div className="animate-item delay-5 mb-4">
                         <button
                             type="submit"
-                            className="btn btn-primary w-100 py-3 rounded-pill d-flex align-items-center justify-content-center gap-2"
+                            className="login-btn"
                             disabled={isLoading}
+                            style={{ background: '#FF6B6B', boxShadow: '0 4px 6px -1px rgba(255, 107, 107, 0.2)' }}
                         >
-                            {isLoading ? (
-                                <>
-                                    <div className="spinner-border spinner-border-sm" role="status">
-                                        <span className="visually-hidden">Loading...</span>
-                                    </div>
-                                    Creating Account...
-                                </>
-                            ) : (
-                                <>
-                                    Sign Up <UserPlus size={20} />
-                                </>
-                            )}
+                            {isLoading ? 'Creating Account...' : 'Sign Up'}
                         </button>
-                    </div>
 
-                    <div className="divider animate-item delay-5">or continue with</div>
+                        <div className="divider">
+                            <span>Or Sign Up With</span>
+                        </div>
 
-                    <div className="row g-3 animate-item delay-5">
-                        <div className="col-6">
-                            <button type="button" className="social-login-btn">
+                        <div className="social-login">
+                            <button type="button" className="social-btn">
                                 <Chrome size={20} className="text-danger" /> Google
                             </button>
-                        </div>
-                        <div className="col-6">
-                            <button type="button" className="social-login-btn">
-                                <Github size={20} /> GitHub
+                            <button type="button" className="social-btn">
+                                <Github size={20} /> Facebook
                             </button>
                         </div>
-                    </div>
-                </form>
+                    </form>
 
-                <div className="text-center mt-5 animate-item delay-5">
-                    <p className="text-secondary mb-0">
-                        Already have an account?{' '}
-                        <Link to="/login" className="text-primary fw-bold text-decoration-none">
+                    <div className="signup-link">
+                        Already have an account?
+                        <Link to="/login" style={{ color: '#FF6B6B' }}>
                             Sign In
                         </Link>
-                    </p>
+                    </div>
                 </div>
             </div>
-
         </div>
     );
 };

@@ -11,7 +11,8 @@ import {
     Layers,
     User as UserIcon,
     AlertCircle,
-    Activity
+    Activity,
+    Star
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useNotification } from '../../context/NotificationContext';
@@ -103,8 +104,8 @@ const AdminProducts = () => {
         e.preventDefault();
         const productData = {
             ...formData,
-            price: parseFloat(formData.price),
-            stock: parseInt(formData.stock)
+            price: parseFloat(formData.price) || 0,
+            stock: parseInt(formData.stock) || 0
         };
 
         let result;
@@ -155,6 +156,7 @@ const AdminProducts = () => {
                                 <th>Product Details</th>
                                 <th>Inventory</th>
                                 <th>Price</th>
+                                <th>Rating</th>
                                 <th>Classification</th>
                                 <th>ID Reference</th>
                                 <th>Actions</th>
@@ -181,6 +183,13 @@ const AdminProducts = () => {
                                     </td>
                                     <td>
                                         <div className="fw-bold text-primary">{formatPrice(product.price || 0)}</div>
+                                    </td>
+                                    <td>
+                                        <div className="d-flex align-items-center gap-1">
+                                            <Star size={14} className="fill-warning text-warning" />
+                                            <span className="fw-bold">{product.rating ? product.rating.toFixed(1) : '-'}</span>
+                                            <span className="text-secondary smaller">({product.numReviews || 0})</span>
+                                        </div>
                                     </td>
                                     <td>
                                         <div className="d-flex flex-column gap-1">
@@ -371,9 +380,9 @@ const AdminProducts = () => {
                             </div>
                         </form>
                     </div>
-                </div >
+                </div>
             )}
-        </div >
+        </div>
     );
 };
 

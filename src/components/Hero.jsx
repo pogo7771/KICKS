@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useStore } from '../context/StoreContext';
 import { ArrowRight } from 'lucide-react';
 import '../css/Hero.css';
 
 const Hero = () => {
+    const { settings } = useStore();
     const [imgError, setImgError] = useState(false);
     const [tiltStyles, setTiltStyles] = useState({
         transform: 'perspective(1000px) rotateX(0deg) rotateY(-5deg) scale(1)'
@@ -43,7 +45,7 @@ const Hero = () => {
                             onMouseLeave={handleMouseLeave}
                         >
                             <img
-                                src={imgError ? "https://images.unsplash.com/photo-1595341888016-a392ef81b7de?q=80&w=1000&auto=format&fit=crop" : "https://www.pngarts.com/files/13/Nike-Shoes-PNG-Image-Background-Transparent.png"}
+                                src={imgError ? "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1000&auto=format&fit=crop" : (settings?.heroImage || "https://res.cloudinary.com/dfjaexjbz/image/upload/v1771158934/bfc6845a76f194f331aef18cff60c4aa-removebg-preview_3_pnkdpw.png")}
                                 className="d-block mx-lg-auto img-fluid hero-image"
                                 alt="Sneaker Showcase"
                                 style={{
@@ -63,10 +65,16 @@ const Hero = () => {
                             <span className="text-secondary fw-medium">SPRING 2026</span>
                         </div>
                         <h1 className="display-1 fw-black lh-1 mb-4 text-body-emphasis" style={{ letterSpacing: '-2px' }}>
-                            STEP INTO <br />
-                            <span className="text-primary">THE FUTURE.</span>
+                            {settings?.heroTitle ? <span dangerouslySetInnerHTML={{ __html: settings.heroTitle.replace('\n', '<br/>') }} /> : (
+                                <>
+                                    STEP INTO <br />
+                                    <span className="text-primary">THE FUTURE.</span>
+                                </>
+                            )}
                         </h1>
-                        <p className="lead text-secondary mb-5 fs-4" style={{ maxWidth: '500px' }}>The next generation of urban footwear is here. Experience gravity-defying comfort and unparalleled style.</p>
+                        <p className="lead text-secondary mb-5 fs-4" style={{ maxWidth: '500px' }}>
+                            {settings?.heroSubtitle || "The next generation of urban footwear is here. Experience gravity-defying comfort and unparalleled style."}
+                        </p>
                         <div className="d-flex flex-column flex-sm-row gap-3">
                             <Link to="/shop" className="btn btn-primary btn-lg px-5 py-3 rounded-pill d-flex align-items-center justify-content-center gap-2">
                                 Shop Collection <ArrowRight size={20} />

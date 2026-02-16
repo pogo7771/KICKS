@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useStore } from '../context/StoreContext';
 import { Package, ChevronRight, Clock, CheckCircle, Truck, XCircle, ArrowLeft, CreditCard, DollarSign, Calendar, ShoppingBag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { generateInvoice } from '../utils/InvoiceGenerator';
 
 const Orders = () => {
     const { user, orders, formatPrice } = useStore();
@@ -11,10 +12,16 @@ const Orders = () => {
     // Filter orders for the logged-in user
     const userOrders = useMemo(() => {
         if (!user || !orders) return [];
-        return orders.filter(order =>
-            order.customer === user.name ||
-            order.email === user.email
-        ).sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date));
+        return orders.filter(order => {
+            const matchesId = order.userId && (order.userId === (user._id || user.id));
+            const matchesEmail = order.email && (order.email === user.email);
+            const matchesName = user.name && (order.customer === user.name);
+            return matchesId || matchesEmail || matchesName;
+        }).sort((a, b) => {
+            const dateA = new Date(a.createdAt || a.date || 0);
+            const dateB = new Date(b.createdAt || b.date || 0);
+            return dateB - dateA;
+        });
     }, [user, orders]);
 
     useEffect(() => {
@@ -57,8 +64,14 @@ const Orders = () => {
                         <div className="text-end">
                             <div className="text-secondary small fw-bold uppercase">Order ID</div>
                             <div className="fw-black fs-5">#{selectedOrder._id ? selectedOrder._id.slice(-6).toUpperCase() : 'ID'}</div>
+                            <button
+                                onClick={() => generateInvoice(selectedOrder)}
+                                className="btn btn-primary btn-sm rounded-pill px-3 mt-2 shadow-sm"
+                            >
+                                Download Invoice
+                            </button>
                         </div>
-                    </div>
+                    </div >
 
                     <div className="card-body p-4 p-md-5">
                         {/* Status Timeline */}
@@ -104,7 +117,7 @@ const Orders = () => {
                                                 </div>
                                             </div>
                                             <div className="flex-grow-1">
-                                                <h6 className="fw-bold mb-1">{item.name}</h6>
+                                                <h6 className="fw-bold mb-1">{item.name || 'Product'}</h6>
                                                 <p className="mb-0 text-secondary small">Size: {item.size} | Qty: {item.quantity}</p>
                                             </div>
                                             <div className="fw-bold fs-5">{formatPrice(item.price * item.quantity)}</div>
@@ -158,7 +171,7 @@ const Orders = () => {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div >
             ) : (
                 // Orders List
                 <div className="d-flex flex-column gap-4">
@@ -211,7 +224,7 @@ const Orders = () => {
                     )}
                 </div>
             )}
-        </div>
+        </div >
     );
 };
 

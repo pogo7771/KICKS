@@ -9,21 +9,21 @@ const CategoryShowcase = () => {
             id: 'men',
             name: "Men's Collection",
             count: "120+ Products",
-            image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=1000&auto=format&fit=crop",
+            image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1000&auto=format&fit=crop",
             link: "/shop"
         },
         {
             id: 'women',
             name: "Women's Collection",
             count: "80+ Products",
-            image: "https://images.unsplash.com/photo-1529810313688-44ea1c2d81d3?q=80&w=1000&auto=format&fit=crop",
+            image: "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?q=80&w=1000&auto=format&fit=crop",
             link: "/women"
         },
         {
             id: 'running',
             name: "Performance Gear",
             count: "45+ Products",
-            image: "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?q=80&w=1000&auto=format&fit=crop",
+            image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=1000&auto=format&fit=crop",
             link: "/shop"
         }
     ];

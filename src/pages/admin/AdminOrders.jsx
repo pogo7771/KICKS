@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useNotification } from '../../context/NotificationContext';
+import { generateInvoice } from '../../utils/InvoiceGenerator';
 import '../../css/admin/AdminOrders.css';
 
 const AdminOrders = () => {
@@ -226,8 +227,8 @@ const AdminOrders = () => {
                                 </div>
                                 <div className="info-item">
                                     <span className="info-label d-flex align-items-center gap-1"><CreditCard size={12} /> Payment</span>
-                                    <span className="info-value text-success">Paid via UPI</span>
-                                    <span className="smaller text-secondary">Ref: txn_9210481BW</span>
+                                    <span className="info-value text-success">{selectedOrder.paymentMethod || 'Online'}</span>
+                                    <span className="smaller text-secondary">Ref: {selectedOrder._id.slice(-6)}</span>
                                 </div>
                                 <div className="info-item">
                                     <span className="info-label d-flex align-items-center gap-1"><MapPin size={12} /> Shipping To</span>
@@ -242,13 +243,14 @@ const AdminOrders = () => {
                                     Order Items ({(selectedOrder.items || []).length})
                                 </h4>
                                 <div className="order-items-list">
+                                    {/* ... existing item list ... */}
                                     {(selectedOrder.items || []).length > 0 ? (
                                         selectedOrder.items.map((item, idx) => (
                                             <div key={idx} className="order-item-row hover-shadow-sm transition">
                                                 <img src={item.image || 'https://via.placeholder.com/60'} alt="" className="order-item-img border" />
                                                 <div className="order-item-info">
                                                     <div className="order-item-name">{item.name || 'Premium Sneaker'}</div>
-                                                    <div className="order-item-meta">Size: UK 9 | Qty: {item.quantity || 1}</div>
+                                                    <div className="order-item-meta">Size: {item.size || 'N/A'} | Qty: {item.quantity || 1}</div>
                                                 </div>
                                                 <div className="order-item-price">{formatPrice(item.price || 0)}</div>
                                             </div>
@@ -265,11 +267,17 @@ const AdminOrders = () => {
                             <div className="order-summary-box">
                                 <div className="summary-row">
                                     <span className="text-secondary">Subtotal:</span>
-                                    <span className="fw-600">{formatPrice(selectedOrder.amount - 150)}</span>
+                                    <span className="fw-600">{formatPrice((selectedOrder.amount || 0) + (selectedOrder.discount || 0))}</span>
                                 </div>
+                                {selectedOrder.discount > 0 && (
+                                    <div className="summary-row text-success">
+                                        <span className="">Discount ({selectedOrder.coupon || 'Applied'}):</span>
+                                        <span className="fw-600">-{formatPrice(selectedOrder.discount)}</span>
+                                    </div>
+                                )}
                                 <div className="summary-row">
                                     <span className="text-secondary">Shipping:</span>
-                                    <span className="fw-600">{formatPrice(0)}</span>
+                                    <span className="fw-600 text-success">Free</span>
                                 </div>
                                 <div className="summary-row summary-total border-top pt-2">
                                     <span>Total:</span>
@@ -289,7 +297,10 @@ const AdminOrders = () => {
                                     </div>
                                 </div>
                                 <div className="d-flex gap-2">
-                                    <button className="btn btn-outline-primary btn-sm rounded-pill px-4">Download Invoice</button>
+                                    <button
+                                        className="btn btn-outline-primary btn-sm rounded-pill px-4"
+                                        onClick={() => generateInvoice(selectedOrder)}
+                                    >Download Invoice</button>
                                     <button className="btn btn-primary btn-sm rounded-pill px-4" onClick={() => setSelectedOrder(null)}>Done</button>
                                 </div>
                             </div>

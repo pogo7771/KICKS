@@ -12,6 +12,7 @@ const Navbar = () => {
     const { user, logout } = useStore();
     const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
+    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isCartOpen, setIsCartOpen] = useState(false);
     const { cartCount = 0 } = useCart();
@@ -79,8 +80,11 @@ const Navbar = () => {
 
                         <div className="reveal-nav-item" style={{ transitionDelay: '0.5s' }}>
                             {user ? (
-                                <div className="dropdown">
-                                    <button className="nav-icon dropdown-toggle no-caret p-0 border-0 bg-transparent d-flex align-items-center" data-bs-toggle="dropdown">
+                                <div className="position-relative">
+                                    <button
+                                        className="nav-icon p-0 border-0 bg-transparent d-flex align-items-center"
+                                        onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                                    >
                                         {user.avatar ? (
                                             <img
                                                 src={user.avatar}
@@ -97,16 +101,60 @@ const Navbar = () => {
                                             </div>
                                         )}
                                     </button>
-                                    <ul className="dropdown-menu dropdown-menu-end shadow-premium border-0 mt-3 animate-slide-in">
-                                        <li className="px-4 py-3 border-bottom">
-                                            <div className="fw-black smaller text-uppercase letter-spacing-1">{user.name}</div>
-                                            <div className="text-secondary smaller">{user.email}</div>
-                                        </li>
-                                        {user.isAdmin && <li><Link className="dropdown-item py-2" to="/admin" target="_blank" rel="noopener noreferrer">Admin Hub</Link></li>}
-                                        <li><Link className="dropdown-item py-2" to="/orders">Order History</Link></li>
-                                        <li><hr className="dropdown-divider opacity-5" /></li>
-                                        <li><button className="dropdown-item py-2 text-danger" onClick={logout}>Sign Out</button></li>
-                                    </ul>
+
+                                    {isUserMenuOpen && (
+                                        <div className="position-absolute end-0 mt-2 bg-white rounded-3 shadow-premium border border-light animate-slide-in" style={{ width: '260px', zIndex: 1050 }}>
+                                            <div className="px-4 py-3 border-bottom bg-light rounded-top-3">
+                                                <div className="fw-black smaller text-uppercase letter-spacing-1 text-primary">{user.name}</div>
+                                                <div className="text-secondary smaller text-truncate">{user.email}</div>
+                                            </div>
+                                            <ul className="list-unstyled mb-0 py-2">
+                                                {user.isAdmin && (
+                                                    <li>
+                                                        <Link
+                                                            className="dropdown-item px-4 py-2 d-flex align-items-center gap-2 hover-bg-light small fw-bold"
+                                                            to="/admin"
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            onClick={() => setIsUserMenuOpen(false)}
+                                                        >
+                                                            <span>Admin Hub</span>
+                                                        </Link>
+                                                    </li>
+                                                )}
+                                                <li>
+                                                    <Link
+                                                        className="dropdown-item px-4 py-2 d-flex align-items-center gap-2 hover-bg-light small"
+                                                        to="/profile"
+                                                        onClick={() => setIsUserMenuOpen(false)}
+                                                    >
+                                                        <span>My Profile</span>
+                                                    </Link>
+                                                </li>
+                                                <li>
+                                                    <Link
+                                                        className="dropdown-item px-4 py-2 d-flex align-items-center gap-2 hover-bg-light small"
+                                                        to="/orders"
+                                                        onClick={() => setIsUserMenuOpen(false)}
+                                                    >
+                                                        <span>Order History</span>
+                                                    </Link>
+                                                </li>
+                                                <li><hr className="dropdown-divider opacity-10 my-1" /></li>
+                                                <li>
+                                                    <button
+                                                        className="dropdown-item px-4 py-2 w-100 text-start text-danger hover-bg-light small fw-bold"
+                                                        onClick={() => {
+                                                            logout();
+                                                            setIsUserMenuOpen(false);
+                                                        }}
+                                                    >
+                                                        Sign Out
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    )}
                                 </div>
                             ) : (
                                 <Link to="/login" className="nav-icon"><User size={22} /></Link>

@@ -12,7 +12,8 @@ import {
     Activity,
     CreditCard,
     Settings,
-    ChevronRight
+    ChevronRight,
+    MessageSquare
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useStore } from '../../context/StoreContext';
@@ -61,18 +62,52 @@ const AdminDashboard = () => {
     const quickActions = [
         { title: 'Add Product', icon: PlusCircle, path: '/admin/products', color: 'bg-primary' },
         { title: 'Manage Orders', icon: CreditCard, path: '/admin/orders', color: 'bg-success' },
-        { title: 'Customer List', icon: Users, path: '/admin/customers', color: 'bg-info' },
+        { title: 'Moderate Reviews', icon: MessageSquare, path: '/admin/reviews', color: 'bg-warning' },
         { title: 'Store Settings', icon: Settings, path: '/admin/settings', color: 'bg-dark' }
     ];
 
-    const generateChartData = () => {
-        const points = [40, 65, 55, 80, 70, 95, 85];
+    const chartData = React.useMemo(() => {
+        const days = 7;
+        const today = new Date();
+        const data = new Array(days).fill(0);
+        const labels = new Array(days).fill('');
+
+        for (let i = 0; i < days; i++) {
+            const date = new Date(today);
+            date.setDate(today.getDate() - (days - 1 - i));
+            labels[i] = date.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+        }
+
+        (orders || []).forEach(order => {
+            if (!order.createdAt) return;
+            const orderDate = new Date(order.createdAt);
+            const diffTime = Math.abs(today - orderDate);
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays < days) {
+                // index 6 is today (diff 0), index 0 is 6 days ago (diff 6)
+                const index = days - 1 - diffDays;
+                if (index >= 0 && index < days) {
+                    data[index] += (order.amount || 0);
+                }
+            }
+        });
+
+        return { data, labels };
+    }, [orders]);
+
+    const generateChartPath = () => {
+        const { data } = chartData;
+        if (data.every(v => v === 0)) return "M 0 200 L 1000 200"; // Flat line if no data
+
+        const maxVal = Math.max(...data, 100); // Minimum scale
         const width = 1000;
         const height = 200;
-        const xStep = width / (points.length - 1);
-        let d = `M 0 ${height - points[0]}`;
-        for (let i = 1; i < points.length; i++) {
-            d += ` L ${i * xStep} ${height - points[i]}`;
+        const xStep = width / (data.length - 1);
+
+        let d = `M 0 ${height - (data[0] / maxVal) * height}`;
+        for (let i = 1; i < data.length; i++) {
+            d += ` L ${i * xStep} ${height - (data[i] / maxVal) * height}`;
         }
         return d;
     };
@@ -138,7 +173,6 @@ const AdminDashboard = () => {
                         </div>
                         <select className="form-select form-select-sm border-0 bg-light rounded-pill px-3">
                             <option>Last 7 Days</option>
-                            <option>Last 30 Days</option>
                         </select>
                     </div>
                     <div className="chart-container">
@@ -149,11 +183,11 @@ const AdminDashboard = () => {
                                     <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
                                 </linearGradient>
                             </defs>
-                            <path d={generateChartData() + " L 1000 200 L 0 200 Z"} fill="url(#chartGradient)" />
-                            <path d={generateChartData()} fill="none" stroke="#3b82f6" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+                            <path d={generateChartPath() + " L 1000 200 L 0 200 Z"} fill="url(#chartGradient)" />
+                            <path d={generateChartPath()} fill="none" stroke="#3b82f6" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                         <div className="d-flex justify-content-between mt-3 text-secondary smaller fw-bold px-2">
-                            {['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map(day => <span key={day}>{day}</span>)}
+                            {chartData.labels.map((day, i) => <span key={i}>{day}</span>)}
                         </div>
                     </div>
                 </div>
@@ -177,7 +211,7 @@ const AdminDashboard = () => {
                                 color: '#3b82f6'
                             })),
                             ...(logs || [])
-                                .filter(l => l.event.startsWith('PRODUCT_') || l.event === 'SETTINGS_UPDATE')
+                                .filter(l => l.event.startsWith('PRODUCT_') || l.event.startsWith('COUPON_') || l.event === 'SETTINGS_UPDATE')
                                 .map(l => ({
                                     type: 'event',
                                     text: l.event.replace('_', ' '),

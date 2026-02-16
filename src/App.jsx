@@ -16,6 +16,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Orders from './pages/Orders';
 import SearchResults from './pages/SearchResults';
+import Profile from './pages/Profile';
 import Loader from './components/Loader';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
@@ -30,6 +31,8 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminProducts from './pages/admin/AdminProducts';
 import AdminOrders from './pages/admin/AdminOrders';
 import AdminCustomers from './pages/admin/AdminCustomers';
+import AdminCoupons from './pages/admin/AdminCoupons';
+import AdminReviews from './pages/admin/AdminReviews';
 import AdminSettings from './pages/admin/AdminSettings';
 
 import './css/index.css';
@@ -122,6 +125,7 @@ const AdminRoutesHandler = () => {
           <Route path="/orders" element={<Orders />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/search" element={<SearchResults />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
 
@@ -133,6 +137,8 @@ const AdminRoutesHandler = () => {
             <Route path="products" element={<AdminProducts />} />
             <Route path="orders" element={<AdminOrders />} />
             <Route path="customers" element={<AdminCustomers />} />
+            <Route path="reviews" element={<AdminReviews />} />
+            <Route path="coupons" element={<AdminCoupons />} />
             <Route path="settings" element={<AdminSettings />} />
           </Route>
 

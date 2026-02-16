@@ -1,9 +1,10 @@
+/* Base Layout */
 .loader-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100px;
     width: 100%;
+    min-height: 200px;
 }
 
 .loader-container.full-page {
@@ -12,86 +13,133 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: white;
+    background: #ffffff;
     z-index: 9999;
 }
 
-.premium-loader {
-    position: relative;
-    width: 120px;
-    height: 120px;
+/* Loader Content */
+.loader-content {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
+    gap: 1.5rem;
+    position: relative;
 }
 
-.loader-ring {
+/* Brand Text with Glitch/Shimmer Effect */
+.loader-brand {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 900;
+    font-size: 4rem;
+    letter-spacing: -2px;
+    color: #000;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    overflow: hidden;
+}
+
+/* Shimmer Animation */
+.loader-brand::after {
+    content: attr(data-text);
     position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    border-radius: 50%;
-    border: 4px solid transparent;
-    border-top-color: #000;
-    animation: spin 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(0, 0, 0, 0.8) 50%,
+        transparent 100%
+    );
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 2.5s infinite linear;
+    z-index: 2;
 }
 
-.loader-ring:nth-child(2) {
-    width: 80%;
-    height: 80%;
-    border-top-color: #333;
-    animation-duration: 2s;
-    animation-direction: reverse;
+/* Sub-text pulse */
+.loader-brand::before {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    color: rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    animation: pulse-scale 2s infinite ease-in-out;
 }
 
-.loader-ring:nth-child(3) {
-    width: 60%;
-    height: 60%;
-    border-top-color: #666;
-    animation-duration: 1s;
+/* Progress Bar */
+.loader-progress-track {
+    width: 120px;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
 }
 
-.loader-text {
-    font-family: 'Outfit', sans-serif;
-    font-weight: 800;
-    font-size: 14px;
-    letter-spacing: 2px;
-    color: #000;
-    animation: pulse 1.5s ease-in-out infinite;
+.loader-progress-bar {
+    width: 100%;
+    height: 100%;
+    background: #000;
+    transform-origin: left;
+    animation: progress-indeterminate 1.5s infinite ease-in-out;
 }
 
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
+/* Animations */
+@keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+}
+
+@keyframes pulse-scale {
+    0%, 100% { transform: scale(1); opacity: 0.1; }
+    50% { transform: scale(1.05); opacity: 0.2; }
+}
+
+@keyframes progress-indeterminate {
+    0% { transform: translateX(-100%); }
+    50% { transform: translateX(0%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .loader-container.full-page {
+        background: #000000;
     }
-
-    100% {
-        transform: rotate(360deg);
+    
+    .loader-brand {
+        color: #ffffff;
     }
-}
-
-@keyframes pulse {
-
-    0%,
-    100% {
-        opacity: 0.5;
-        transform: scale(0.95);
+    
+    .loader-brand::after {
+        background: linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.8) 50%,
+            transparent 100%
+        );
+        background-clip: text;
+        -webkit-background-clip: text;
     }
-
-    50% {
-        opacity: 1;
-        transform: scale(1.05);
+    
+    .loader-brand::before {
+        color: rgba(255, 255, 255, 0.1);
     }
-}
-
-/* Dark mode support if applicable */
-[data-theme='dark'] .loader-container.full-page {
-    background: #111;
-}
-
-[data-theme='dark'] .loader-ring {
-    border-top-color: #fff;
-}
-
-[data-theme='dark'] .loader-text {
-    color: #fff;
+    
+    .loader-progress-track {
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .loader-progress-bar {
+        background: #ffffff;
+    }
 }

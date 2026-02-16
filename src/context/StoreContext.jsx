@@ -24,12 +24,7 @@ export const StoreProvider = ({ children }) => {
     const [rates, setRates] = useState({ USD: 0.012, EUR: 0.011 }); // Fallback rates
 
     const isAdmin = user?.isAdmin || false;
-    // Normalize API URL to ensure it always ends with /api
-    let envUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-    if (envUrl.endsWith('/')) envUrl = envUrl.slice(0, -1);
-    if (!envUrl.endsWith('/api')) envUrl += '/api';
-    const API_URL = envUrl;
-
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
     console.log("StoreContext initialized, API_URL:", API_URL);
 
     // Fetch products, orders, customers, settings and exchange rates on mount
@@ -458,6 +453,156 @@ export const StoreProvider = ({ children }) => {
         }
     };
 
+    const updateUserProfile = async (id, profileData) => {
+        try {
+            const res = await fetch(`${API_URL}/auth/profile/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(profileData)
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setUser(prev => ({ ...prev, name: data.name, email: data.email }));
+                return { success: true };
+            }
+            return { success: false, message: data.message };
+        } catch {
+            return { success: false, message: "Connection error" };
+        }
+    };
+
+    const updateUserPassword = async (id, passwordData) => {
+        try {
+            const res = await fetch(`${API_URL}/auth/password/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(passwordData)
+            });
+            const data = await res.json();
+            if (res.ok) {
+                return { success: true };
+            }
+            return { success: false, message: data.message };
+        } catch {
+            return { success: false, message: "Connection error" };
+        }
+    };
+
+    // Coupons
+    const [coupons, setCoupons] = useState([]);
+
+    // Fetch coupons on mount
+    useEffect(() => {
+        const fetchCoupons = async () => {
+            try {
+                const res = await fetch(`${API_URL}/coupons`);
+                const data = await res.json();
+                if (Array.isArray(data)) setCoupons(data);
+            } catch (e) {
+                console.error("Error fetching coupons:", e);
+            }
+        };
+        fetchCoupons();
+    }, []);
+
+    const addCoupon = async (couponData) => {
+        try {
+            const res = await fetch(`${API_URL}/coupons`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(couponData)
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setCoupons(prev => [data, ...prev]);
+                return { success: true };
+            }
+            return { success: false, message: data.message };
+        } catch (e) {
+            return { success: false, message: 'Server error' };
+        }
+    };
+
+    const deleteCoupon = async (id) => {
+        try {
+            const res = await fetch(`${API_URL}/coupons/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                setCoupons(prev => prev.filter(c => c._id !== id));
+                return { success: true };
+            }
+            return { success: false };
+        } catch (e) {
+            return { success: false };
+        }
+    };
+
+    const validateCoupon = async (code, cartTotal) => {
+        try {
+            const res = await fetch(`${API_URL}/coupons/validate`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code, cartTotal })
+            });
+            const data = await res.json();
+            if (res.ok) return { success: true, ...data };
+            return { success: false, message: data.message };
+        } catch (e) {
+            return { success: false, message: 'Server error' };
+        }
+    };
+
+    const addReview = async (productId, reviewData) => {
+        try {
+            const res = await fetch(`${API_URL}/products/${productId}/reviews`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(reviewData)
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setProducts(prev => prev.map(p => {
+                    if (p._id === productId || p.id === productId) {
+                        const newReviews = [...(p.reviews || []), { ...reviewData, date: new Date().toISOString() }];
+                        const newRating = newReviews.reduce((acc, r) => acc + Number(r.rating), 0) / newReviews.length;
+                        return { ...p, reviews: newReviews, numReviews: newReviews.length, rating: newRating };
+                    }
+                    return p;
+                }));
+                // Need to reload products to get correct _id for new review if immediate delete, but for now ok
+                await fetchProducts(); // Refresh to ensure IDs
+                return { success: true };
+            }
+            return { success: false, message: data.message };
+        } catch (e) {
+            return { success: false, message: 'Connection error' };
+        }
+    };
+
+    const deleteReview = async (productId, reviewId) => {
+        try {
+            const res = await fetch(`${API_URL}/products/${productId}/reviews/${reviewId}`, {
+                method: 'DELETE'
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setProducts(prev => prev.map(p => {
+                    if (p._id === productId || p.id === productId) {
+                        const newReviews = p.reviews.filter(r => r._id !== reviewId);
+                        const newRating = newReviews.length > 0
+                            ? newReviews.reduce((acc, r) => acc + Number(r.rating), 0) / newReviews.length
+                            : 0;
+                        return { ...p, reviews: newReviews, numReviews: newReviews.length, rating: newRating };
+                    }
+                    return p;
+                }));
+                return { success: true };
+            }
+            return { success: false, message: data.message };
+        } catch (e) {
+            return { success: false, message: 'Connection error' };
+        }
+    };
+
     return (
         <StoreContext.Provider value={{
             products,
@@ -481,12 +626,21 @@ export const StoreProvider = ({ children }) => {
             updateAdminPassword,
             verify2FA,
             fetchSecurityLogs,
-            verify2FA,
-            fetchSecurityLogs,
+
+            updateUserProfile,
+            updateUserPassword,
+
             resetAdminPasswordRequest,
             resetAdminPassword,
             logs,
-            API_URL
+
+            // Coupons
+            coupons,
+            addCoupon,
+            deleteCoupon,
+            validateCoupon,
+            addReview,
+            deleteReview
         }}
         >
             {children}

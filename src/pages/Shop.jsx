@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import ProductCard from '../components/ProductCard';
 import { useStore } from '../context/StoreContext';
-import { Filter, ChevronDown, LayoutGrid, List } from 'lucide-react';
+import { Filter, ChevronDown, LayoutGrid, List, Search } from 'lucide-react';
 import '../css/Shop.css';
 
 const Shop = () => {
     const { products: shoes } = useStore();
+    const [searchTerm, setSearchTerm] = useState('');
     const [filter, setFilter] = useState('All');
     const [sortBy, setSortBy] = useState('default');
     const [isFiltering, setIsFiltering] = useState(false);
@@ -19,20 +20,37 @@ const Shop = () => {
     };
 
     const filteredAndSortedShoes = useMemo(() => {
-        let result = filter === 'All'
-            ? [...(shoes || [])]
-            : (shoes || []).filter(shoe => shoe.category === filter);
+        let result = shoes || [];
 
-        if (sortBy === 'price-low') {
-            result.sort((a, b) => a.price - b.price);
-        } else if (sortBy === 'price-high') {
-            result.sort((a, b) => b.price - a.price);
-        } else if (sortBy === 'newest') {
-            result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        // Search Filter
+        if (searchTerm) {
+            const lowerTerm = searchTerm.toLowerCase();
+            result = result.filter(shoe =>
+                shoe.name.toLowerCase().includes(lowerTerm) ||
+                shoe.brand?.toLowerCase().includes(lowerTerm) ||
+                shoe.category?.toLowerCase().includes(lowerTerm)
+            );
         }
 
-        return result;
-    }, [shoes, filter, sortBy]);
+        // Category Filter
+        if (filter !== 'All') {
+            result = result.filter(shoe => shoe.category === filter);
+        }
+
+        // Sorting
+        const sorted = [...result];
+        if (sortBy === 'price-low') {
+            sorted.sort((a, b) => a.price - b.price);
+        } else if (sortBy === 'price-high') {
+            sorted.sort((a, b) => b.price - a.price);
+        } else if (sortBy === 'newest') {
+            sorted.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+        } else if (sortBy === 'top-rated') {
+            sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        }
+
+        return sorted;
+    }, [shoes, filter, sortBy, searchTerm]);
 
     return (
         <div className="container py-5">
@@ -43,15 +61,29 @@ const Shop = () => {
                         <p className="lead text-secondary mb-0">Discover the fusion of performance and street style.</p>
                     </div>
                     <div className="col-lg-6 d-flex flex-wrap justify-content-lg-end gap-3">
+                        <div className="d-flex align-items-center bg-white rounded-pill px-3 py-2 border shadow-sm flex-grow-1 flex-lg-grow-0" style={{ minWidth: '200px' }}>
+                            <Search size={18} className="text-secondary me-2" />
+                            <input
+                                type="text"
+                                className="border-0 bg-transparent fw-bold small p-0 focus-none w-100"
+                                placeholder="Search..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                style={{ outline: 'none' }}
+                            />
+                        </div>
+
                         <div className="d-flex align-items-center bg-white rounded-pill px-3 py-2 border shadow-sm">
                             <Filter size={18} className="text-primary me-2" />
                             <select
                                 className="form-select border-0 bg-transparent fw-bold small p-0 focus-none"
                                 value={filter}
-                                onChange={(e) => handleFilterChange(e.target.value)}
+                                onChange={(e) => setFilter(e.target.value)}
                                 style={{ width: 'auto', outline: 'none', boxShadow: 'none' }}
                             >
-                                {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                                {categories.map(cat => (
+                                    <option key={cat} value={cat}>{cat}</option>
+                                ))}
                             </select>
                         </div>
                         <div className="d-flex align-items-center bg-white rounded-pill px-3 py-2 border shadow-sm">
@@ -63,6 +95,7 @@ const Shop = () => {
                                 style={{ width: 'auto', outline: 'none', boxShadow: 'none' }}
                             >
                                 <option value="default">Sort By: Popularity</option>
+                                <option value="top-rated">Sort By: Top Rated</option>
                                 <option value="newest">Sort By: Newest</option>
                                 <option value="price-low">Price: Low to High</option>
                                 <option value="price-high">Price: High to Low</option>

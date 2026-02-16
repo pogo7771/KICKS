@@ -11,13 +11,19 @@ import '../css/Checkout.css';
 
 const Checkout = () => {
     const { cart, cartTotal, clearCart } = useCart();
-    const { addOrder, formatPrice, API_URL } = useStore();
+    const { user, addOrder, formatPrice, validateCoupon } = useStore();
     const { showNotification } = useNotification();
     const navigate = useNavigate();
     const [clientSecret, setClientSecret] = useState("");
     const [paymentMethod, setPaymentMethod] = useState("cod");
     const [isProcessing, setIsProcessing] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+
+    // Coupon State
+    const [couponCode, setCouponCode] = useState('');
+    const [discount, setDiscount] = useState(0);
+    const [appliedCoupon, setAppliedCoupon] = useState(null);
+
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -28,22 +34,40 @@ const Checkout = () => {
         zip: ''
     });
 
+    // Calculate final total
+    const finalTotal = Math.max(0, cartTotal - discount);
+
     // Initialize Stripe
     const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || "pk_test_TYooMQauvdEDq54NiTphI7jx");
 
     useEffect(() => {
         // Create PaymentIntent as soon as the page loads
-        if (API_URL) {
-            fetch(`${API_URL}/create-payment-intent`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ amount: cartTotal, currency: 'inr' }),
-            })
-                .then((res) => res.json())
-                .then((data) => setClientSecret(data.clientSecret))
-                .catch((err) => console.error("Error fetching payment intent", err));
+        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+        fetch(`${API_URL}/create-payment-intent`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ amount: finalTotal, currency: 'inr' }),
+        })
+            .then((res) => res.json())
+            .then((data) => setClientSecret(data.clientSecret))
+            .catch((err) => console.error("Error fetching payment intent", err));
+    }, [cartTotal, finalTotal]); // Re-run when total changes
+
+    const handleApplyCoupon = async (e) => {
+        e.preventDefault();
+        if (!couponCode.trim()) return;
+
+        const result = await validateCoupon(couponCode, cartTotal);
+        if (result.success) {
+            setDiscount(result.discount);
+            setAppliedCoupon(result.coupon);
+            showNotification(`Coupon applied: ${formatPrice(result.discount)} OFF`, 'success');
+        } else {
+            setDiscount(0);
+            setAppliedCoupon(null);
+            showNotification(result.message || 'Invalid coupon', 'error');
         }
-    }, [cartTotal]);
+    };
 
     const handlePlaceOrder = (e) => {
         e.preventDefault();
@@ -56,17 +80,25 @@ const Checkout = () => {
 
         addOrder({
             customer: `${formData.firstName} ${formData.lastName}`,
-            amount: cartTotal,
+            email: user?.email || formData.email,
+            userId: user?._id || user?.id,
+            amount: finalTotal,
             status: 'Processing',
-            paymentMethod: paymentMethod === 'card' ? 'Credit Card (Stripe)' : (paymentMethod === 'upi' ? 'UPI' : 'COD'),
+            paymentMethod: paymentMethod === 'card' ? 'Credit Card (Stripe)' : (paymentMethod === 'razorpay' ? 'UPI (Razorpay)' : 'COD'),
             items: cart.map(item => ({
                 id: item.id,
                 name: item.name,
                 price: item.price,
                 quantity: item.quantity,
                 size: item.size
-            }))
+            })),
+            discount: discount,
+            coupon: appliedCoupon ? appliedCoupon.code : null
         });
+
+        if (paymentMethod === 'razorpay') {
+            window.open('https://razorpay.me/@sachin7820', '_blank');
+        }
 
         setIsSuccess(true);
         clearCart();
@@ -153,16 +185,36 @@ const Checkout = () => {
                             </li>
                         ))}
 
+                        {discount > 0 && (
+                            <li className="list-group-item d-flex justify-content-between bg-light text-success">
+                                <div className="d-flex flex-column">
+                                    <span>Discount (Coupon: {appliedCoupon?.code})</span>
+                                    <small className="cursor-pointer text-decoration-underline" onClick={() => {
+                                        setDiscount(0);
+                                        setAppliedCoupon(null);
+                                        setCouponCode('');
+                                    }}>Remove</small>
+                                </div>
+                                <strong>-{formatPrice(discount)}</strong>
+                            </li>
+                        )}
                         <li className="list-group-item d-flex justify-content-between">
-                            <span>Total</span>
-                            <strong>{formatPrice(cartTotal)}</strong>
+                            <span>Total (INR)</span>
+                            <strong>{formatPrice(finalTotal)}</strong>
                         </li>
                     </ul>
 
-                    <form className="card p-2">
+                    <form className="card p-2" onSubmit={handleApplyCoupon}>
                         <div className="input-group">
-                            <input type="text" className="form-control" placeholder="Promo code" />
-                            <button type="submit" className="btn btn-secondary">Redeem</button>
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Promo code"
+                                value={couponCode}
+                                onChange={(e) => setCouponCode(e.target.value)}
+                                disabled={discount > 0}
+                            />
+                            <button type="submit" className="btn btn-secondary" disabled={discount > 0 || !couponCode}>Redeem</button>
                         </div>
                     </form>
                 </div>
@@ -254,6 +306,20 @@ const Checkout = () => {
 
                             <div className="form-check mb-2">
                                 <input
+                                    id="razorpay"
+                                    name="paymentMethod"
+                                    type="radio"
+                                    className="form-check-input"
+                                    checked={paymentMethod === 'razorpay'}
+                                    onChange={() => setPaymentMethod('razorpay')}
+                                />
+                                <label className="form-check-label fw-bold text-primary" htmlFor="razorpay">
+                                    UPI / Pay via Razorpay
+                                </label>
+                            </div>
+
+                            <div className="form-check mb-2">
+                                <input
                                     id="cod"
                                     name="paymentMethod"
                                     type="radio"
@@ -268,7 +334,9 @@ const Checkout = () => {
                         <hr className="my-4" />
 
                         {paymentMethod !== 'card' && (
-                            <button className="w-100 btn btn-primary btn-lg" type="submit">Place Order (COD)</button>
+                            <button className="w-100 btn btn-primary btn-lg" type="submit">
+                                {paymentMethod === 'razorpay' ? 'Place Order & Pay' : 'Place Order (COD)'}
+                            </button>
                         )}
 
                         {paymentMethod === 'card' && !clientSecret && (

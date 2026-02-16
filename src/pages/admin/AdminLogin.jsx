@@ -14,6 +14,8 @@ const AdminLogin = () => {
     const [resetToken, setResetToken] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+    const [verificationCode, setVerificationCode] = useState('');
+    const [tempId, setTempId] = useState(null);
 
     const { isAdmin, login, verify2FA, resetAdminPasswordRequest, resetAdminPassword } = useStore();
     const navigate = useNavigate();
@@ -94,7 +96,7 @@ const AdminLogin = () => {
             setTimeout(() => {
                 setView('login');
                 setSuccessMessage('');
-                setReseToken('');
+                setResetToken('');
                 setNewPassword('');
             }, 2000);
         } else {

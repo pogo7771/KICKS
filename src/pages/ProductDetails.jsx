@@ -6,6 +6,7 @@ import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useNotification } from '../context/NotificationContext';
 import ProductCard from '../components/ProductCard';
+import ProductReviews from '../components/ProductReviews';
 import '../css/ProductDetails.css';
 
 const ProductDetails = () => {
@@ -132,8 +133,8 @@ const ProductDetails = () => {
                             <h2 className="fw-black text-primary mb-0">{formatPrice(product.price)}</h2>
                             <div className="d-flex align-items-center gap-1 bg-warning bg-opacity-10 px-2 py-1 rounded">
                                 <Star size={16} className="text-warning fill-warning" />
-                                <span className="fw-bold fs-6">{product.rating || 4.5}</span>
-                                <span className="text-secondary smaller">(128 reviews)</span>
+                                <span className="fw-bold fs-6">{product.rating ? product.rating.toFixed(1) : 'New'}</span>
+                                <span className="text-secondary smaller">({product.numReviews || 0} reviews)</span>
                             </div>
                         </div>
 
@@ -217,17 +218,22 @@ const ProductDetails = () => {
                         <li className="nav-item">
                             <button className={`nav-link ${activeTab === 'details' ? 'active' : ''}`} onClick={() => setActiveTab('details')}>TECH SPECS</button>
                         </li>
+                        <li className="nav-item">
+                            <button className={`nav-link ${activeTab === 'reviews' ? 'active' : ''}`} onClick={() => setActiveTab('reviews')}>REVIEWS ({product.numReviews || 0})</button>
+                        </li>
                     </ul>
 
                     <div className="py-4">
-                        {activeTab === 'description' ? (
+                        {activeTab === 'description' && (
                             <div className="row">
                                 <div className="col-md-8">
                                     <h4 className="fw-black mb-3">REDEFINING COMFORT</h4>
                                     <p className="text-secondary">Designed for the modern athlete, this model features our latest energy-return technology. The lightweight upper provides a supportive fit that feels secure through every move. Whether you're hitting the gym or the streets, this is your ultimate companion.</p>
                                 </div>
                             </div>
-                        ) : (
+                        )}
+
+                        {activeTab === 'details' && (
                             <div className="row g-4">
                                 <div className="col-md-4">
                                     <div className="p-3 bg-light rounded-3">
@@ -248,6 +254,10 @@ const ProductDetails = () => {
                                     </div>
                                 </div>
                             </div>
+                        )}
+
+                        {activeTab === 'reviews' && (
+                            <ProductReviews product={product} />
                         )}
                     </div>
                 </div>

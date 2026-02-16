@@ -230,6 +230,7 @@ const AdminSettings = () => {
                             <div className="list-group list-group-flush">
                                 {[
                                     { id: 'general', label: 'General', icon: SettingsIcon },
+                                    { id: 'storefront', label: 'Storefront', icon: SettingsIcon },
                                     { id: 'profile', label: 'Admin Profile', icon: UserIcon },
                                     { id: 'security', label: 'Security', icon: Lock },
                                     { id: 'notifications', label: 'Notifications', icon: Bell },
@@ -534,6 +535,54 @@ const AdminSettings = () => {
                                                 </div>
                                             </div>
                                         ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'storefront' && (
+                                <div className="animate-fade-in">
+                                    <div className="d-flex align-items-center gap-3 mb-4">
+                                        <div className="p-2 bg-warning-subtle rounded-3 text-warning">
+                                            <SettingsIcon size={24} />
+                                        </div>
+                                        <h4 className="mb-0 fw-bold">Storefront Customization</h4>
+                                    </div>
+                                    <div className="row g-4">
+                                        <div className="col-12">
+                                            <label className="form-label text-secondary smaller fw-bold uppercase letter-spacing-1">Hero Title</label>
+                                            <input
+                                                type="text"
+                                                className="form-control form-control-lg border-2"
+                                                value={settings.heroTitle || ''}
+                                                onChange={(e) => handleSettingsChange('heroTitle', e.target.value)}
+                                                placeholder="STEP INTO THE FUTURE."
+                                            />
+                                            <p className="smaller text-secondary mt-1">Use \n for new lines.</p>
+                                        </div>
+                                        <div className="col-12">
+                                            <label className="form-label text-secondary smaller fw-bold uppercase letter-spacing-1">Hero Subtitle</label>
+                                            <textarea
+                                                className="form-control border-2"
+                                                rows="3"
+                                                value={settings.heroSubtitle || ''}
+                                                onChange={(e) => handleSettingsChange('heroSubtitle', e.target.value)}
+                                            ></textarea>
+                                        </div>
+                                        <div className="col-12">
+                                            <label className="form-label text-secondary smaller fw-bold uppercase letter-spacing-1">Hero Image URL</label>
+                                            <input
+                                                type="url"
+                                                className="form-control border-2"
+                                                value={settings.heroImage || ''}
+                                                onChange={(e) => handleSettingsChange('heroImage', e.target.value)}
+                                            />
+                                            {settings.heroImage && (
+                                                <div className="mt-3 p-2 border rounded-3 bg-light">
+                                                    <p className="smaller fw-bold mb-2">Preview:</p>
+                                                    <img src={settings.heroImage} alt="Hero Preview" className="img-fluid rounded-2" style={{ maxHeight: '200px' }} />
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             )}
