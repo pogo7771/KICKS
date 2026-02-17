@@ -34,11 +34,11 @@ export const StoreProvider = ({ children }) => {
             try {
                 // Parallel fetching for performance and fault tolerance
                 const [prodRes, orderRes, userRes, settingsRes, logsRes] = await Promise.allSettled([
-                    fetch(`${API_URL}/products`),
-                    fetch(`${API_URL}/orders`),
-                    fetch(`${API_URL}/users`),
-                    fetch(`${API_URL}/settings`),
-                    fetch(`${API_URL}/security/logs`)
+                    fetch(`${API_URL}/products`, { headers: { 'ngrok-skip-browser-warning': 'true' } }),
+                    fetch(`${API_URL}/orders`, { headers: { 'ngrok-skip-browser-warning': 'true' } }),
+                    fetch(`${API_URL}/users`, { headers: { 'ngrok-skip-browser-warning': 'true' } }),
+                    fetch(`${API_URL}/settings`, { headers: { 'ngrok-skip-browser-warning': 'true' } }),
+                    fetch(`${API_URL}/security/logs`, { headers: { 'ngrok-skip-browser-warning': 'true' } })
                 ]);
 
                 // Handle Products
@@ -147,7 +147,7 @@ export const StoreProvider = ({ children }) => {
         try {
             const res = await fetch(`${API_URL}/settings`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
                 body: JSON.stringify(newSettings)
             });
             const data = await res.json();
@@ -176,7 +176,7 @@ export const StoreProvider = ({ children }) => {
             const endpoint = isLoggingInAsAdmin ? `${API_URL}/auth/admin/login` : `${API_URL}/auth/login`;
             const res = await fetch(endpoint, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
                 body: JSON.stringify({ email, password })
             });
 
@@ -204,7 +204,7 @@ export const StoreProvider = ({ children }) => {
         try {
             const res = await fetch(`${API_URL}/auth/admin/verify-2fa`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
                 body: JSON.stringify({ id, code })
             });
             const data = await res.json();
@@ -223,7 +223,7 @@ export const StoreProvider = ({ children }) => {
         try {
             const res = await fetch(`${API_URL}/auth/register`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
                 body: JSON.stringify({ name, email, password })
             });
             const data = await res.json();
@@ -250,7 +250,8 @@ export const StoreProvider = ({ children }) => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'ngrok-skip-browser-warning': 'true'
                 },
                 body: JSON.stringify(product)
             });
@@ -273,7 +274,8 @@ export const StoreProvider = ({ children }) => {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'ngrok-skip-browser-warning': 'true'
                 },
                 body: JSON.stringify(updatedProduct)
             });
@@ -295,7 +297,8 @@ export const StoreProvider = ({ children }) => {
             const res = await fetch(`${API_URL}/products/${id}`, {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'ngrok-skip-browser-warning': 'true'
                 }
             });
             if (res.ok) {
@@ -317,7 +320,8 @@ export const StoreProvider = ({ children }) => {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'ngrok-skip-browser-warning': 'true'
                 },
                 body: JSON.stringify({ status })
             });
@@ -341,7 +345,7 @@ export const StoreProvider = ({ children }) => {
         try {
             const res = await fetch(`${API_URL}/orders`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
                 body: JSON.stringify(order)
             });
             const newOrder = await res.json();
@@ -381,7 +385,7 @@ export const StoreProvider = ({ children }) => {
             const targetId = id || user?.id || user?._id;
             const res = await fetch(`${API_URL}/auth/admin/profile/${targetId}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
                 body: JSON.stringify(profileData)
             });
             const data = await res.json();
