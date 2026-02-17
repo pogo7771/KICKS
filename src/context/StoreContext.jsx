@@ -403,7 +403,7 @@ export const StoreProvider = ({ children }) => {
         try {
             const res = await fetch(`${API_URL}/auth/admin/password/${id}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
                 body: JSON.stringify(passwordData)
             });
             const data = await res.json();
@@ -418,7 +418,7 @@ export const StoreProvider = ({ children }) => {
 
     const fetchSecurityLogs = async () => {
         try {
-            const res = await fetch(`${API_URL}/security/logs`);
+            const res = await fetch(`${API_URL}/security/logs`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
             const data = await res.json();
             return data;
         } catch {
@@ -430,7 +430,7 @@ export const StoreProvider = ({ children }) => {
         try {
             const res = await fetch(`${API_URL}/auth/admin/forgot-password`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
                 body: JSON.stringify({ email })
             });
             const data = await res.json();
@@ -444,7 +444,7 @@ export const StoreProvider = ({ children }) => {
         try {
             const res = await fetch(`${API_URL}/auth/admin/reset-password`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
                 body: JSON.stringify({ token, newPassword })
             });
             const data = await res.json();
@@ -461,7 +461,7 @@ export const StoreProvider = ({ children }) => {
         try {
             const res = await fetch(`${API_URL}/auth/profile/${id}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
                 body: JSON.stringify(profileData)
             });
             const data = await res.json();
@@ -479,7 +479,7 @@ export const StoreProvider = ({ children }) => {
         try {
             const res = await fetch(`${API_URL}/auth/password/${id}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
                 body: JSON.stringify(passwordData)
             });
             const data = await res.json();
@@ -499,7 +499,7 @@ export const StoreProvider = ({ children }) => {
     useEffect(() => {
         const fetchCoupons = async () => {
             try {
-                const res = await fetch(`${API_URL}/coupons`);
+                const res = await fetch(`${API_URL}/coupons`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
                 const data = await res.json();
                 if (Array.isArray(data)) setCoupons(data);
             } catch (e) {
@@ -513,7 +513,7 @@ export const StoreProvider = ({ children }) => {
         try {
             const res = await fetch(`${API_URL}/coupons`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
                 body: JSON.stringify(couponData)
             });
             const data = await res.json();
@@ -529,7 +529,10 @@ export const StoreProvider = ({ children }) => {
 
     const deleteCoupon = async (id) => {
         try {
-            const res = await fetch(`${API_URL}/coupons/${id}`, { method: 'DELETE' });
+            const res = await fetch(`${API_URL}/coupons/${id}`, {
+                method: 'DELETE',
+                headers: { 'ngrok-skip-browser-warning': 'true' }
+            });
             if (res.ok) {
                 setCoupons(prev => prev.filter(c => c._id !== id));
                 return { success: true };
@@ -544,7 +547,7 @@ export const StoreProvider = ({ children }) => {
         try {
             const res = await fetch(`${API_URL}/coupons/validate`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
                 body: JSON.stringify({ code, cartTotal })
             });
             const data = await res.json();
@@ -559,7 +562,7 @@ export const StoreProvider = ({ children }) => {
         try {
             const res = await fetch(`${API_URL}/products/${productId}/reviews`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
                 body: JSON.stringify(reviewData)
             });
             const data = await res.json();
@@ -585,7 +588,8 @@ export const StoreProvider = ({ children }) => {
     const deleteReview = async (productId, reviewId) => {
         try {
             const res = await fetch(`${API_URL}/products/${productId}/reviews/${reviewId}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: { 'ngrok-skip-browser-warning': 'true' }
             });
             const data = await res.json();
             if (res.ok) {
